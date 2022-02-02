@@ -1,0 +1,72 @@
+diff --git a/pxr/base/arch/mallocHook.cpp b/pxr/base/arch/mallocHook.cpp
+index b68a31afb..c96484848 100644
+--- a/pxr/base/arch/mallocHook.cpp
++++ b/pxr/base/arch/mallocHook.cpp
+@@ -28,7 +28,7 @@
+ #include "pxr/base/arch/defines.h"
+ #include "pxr/base/arch/env.h"
+ 
+-#if !defined(ARCH_OS_WINDOWS)
++#if 0
+ #   include <dlfcn.h>
+ #endif
+ #include <cstring>
+@@ -88,14 +88,14 @@ static bool
+ _MallocProvidedBySameLibraryAs(const char* functionName,
+                                bool skipMallocCheck)
+ {
+-#if !defined(ARCH_OS_WINDOWS)
++#if 0
+     const void* function = dlsym(RTLD_DEFAULT, functionName);
+     if (!function) {
+         return false;
+     }
+ 
+     Dl_info functionInfo, mallocInfo;
+-    if (!dladdr(function, &functionInfo) || 
++    if (!dladdr(function, &functionInfo) ||
+         !dladdr((void *)malloc, &mallocInfo)) {
+         return false;
+     }
+@@ -151,8 +151,8 @@ ArchIsJemallocActive()
+ bool
+ ArchIsStlAllocatorOff()
+ {
+-#if defined(ARCH_COMPILER_GCC) || defined(ARCH_COMPILER_ICC) || \
+-    defined(ARCH_COMPILER_CLANG)
++#if 0
++
+     // I'm assuming that ICC compiles will use the gcc STL library.
+ 
+     /*
+@@ -177,7 +177,7 @@ ArchMallocHook::IsInitialized()
+        _underlyingMemalignFunc || _underlyingFreeFunc;
+ }
+ 
+-#if defined(ARCH_OS_LINUX)
++#if 0
+ template <typename T>
+ static bool _GetSymbol(T* addr, const char* name, string* errMsg) {
+     if (void* symbol = dlsym(RTLD_DEFAULT, name)) {
+@@ -241,7 +241,7 @@ ArchMallocHook::Initialize(
+     ARCH_UNUSED_ARG void  (*freeWrapper)(void*, const void*),
+     string* errMsg)
+ {
+-#if !defined(ARCH_OS_LINUX)
++#if 1
+     *errMsg = "ArchMallocHook functionality not implemented for non-linux systems";
+     return false;
+ #else
+diff --git a/pxr/base/work/singularTask.h b/pxr/base/work/singularTask.h
+index 0c7914d0b..bc82bbf74 100644
+--- a/pxr/base/work/singularTask.h
++++ b/pxr/base/work/singularTask.h
+@@ -108,7 +108,7 @@ private:
+                     // case we go again to ensure the task can do whatever it
+                     // was awakened to do.  Once we successfully take the count
+                     // to zero, we stop.
+-                    size_t old = count;
++                    std::size_t old = count;
+                     do { _fn(); } while (
+                         !count.compare_exchange_strong(old, 0));
+                 });

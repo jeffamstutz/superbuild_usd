@@ -19,13 +19,17 @@ endmacro()
 macro(build_subproject)
   # See cmake_parse_arguments docs to see how args get parsed here:
   #    https://cmake.org/cmake/help/latest/command/cmake_parse_arguments.html
-  set(oneValueArgs NAME URL)
+  set(oneValueArgs NAME URL PATCH_FILE)
   set(multiValueArgs BUILD_ARGS DEPENDS_ON)
   cmake_parse_arguments(BUILD_SUBPROJECT "" "${oneValueArgs}"
                         "${multiValueArgs}" ${ARGN})
 
   # Setup SUBPROJECT_* variables (containing paths) for this function
   setup_subproject_path_vars(${BUILD_SUBPROJECT_NAME})
+
+  if (BUILD_SUBPROJECT_PATCH_FILE)
+    set(PATCH_COMMAND ${GIT_EXECUTABLE} apply ${BUILD_SUBPROJECT_PATCH_FILE})
+  endif()
 
   # Build the actual subproject
   ExternalProject_Add(${SUBPROJECT_NAME}
@@ -35,6 +39,7 @@ macro(build_subproject)
     SOURCE_DIR ${SUBPROJECT_SOURCE_PATH}
     BINARY_DIR ${SUBPROJECT_BUILD_PATH}
     URL ${BUILD_SUBPROJECT_URL}
+    PATCH_COMMAND ${PATCH_COMMAND}
     LIST_SEPARATOR | # Use the alternate list separator
     CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=Release

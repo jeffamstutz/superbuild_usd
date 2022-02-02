@@ -11,6 +11,8 @@ endif()
 
 project(build_usd)
 
+find_package(Git REQUIRED)
+
 include(ExternalProject)
 include(ProcessorCount)
 include(macros.cmake)
@@ -59,6 +61,7 @@ build_subproject(
 build_subproject(
   NAME USD
   URL "https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v21.08.zip"
+  PATCH_FILE ${CMAKE_SOURCE_DIR}/usd_build_fix.patch
   BUILD_ARGS
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     -DPXR_BUILD_EXAMPLES=OFF
