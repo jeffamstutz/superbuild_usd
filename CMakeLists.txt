@@ -43,9 +43,10 @@ build_subproject(
 
 build_subproject(
   NAME OpenVDB
-  URL "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v8.1.0.zip"
+  URL "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v6.1.0.zip"
   BUILD_ARGS
     -DOPENVDB_BUILD_BINARIES=OFF
+    -DOPENVDB_BUILD_PYTHON_MODULE=OFF
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
   DEPENDS_ON Blosc
 )
