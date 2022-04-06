@@ -9,6 +9,8 @@ if(NOT CMAKE_INSTALL_PREFIX)
       CACHE STRING "Final install location." FORCE)
 endif()
 
+set(CMAKE_BUILD_TYPE_INIT "Release")
+
 project(build_usd)
 
 find_package(Git REQUIRED)
