@@ -28,13 +28,6 @@ get_filename_component(INSTALL_DIR_ABSOLUTE
 ## Build projects ##
 
 build_subproject(
-  NAME zlib
-  URL "http://zlib.net/zlib1211.zip"
-  BUILD_ARGS
-    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-)
-
-build_subproject(
   NAME Blosc
   URL "https://github.com/Blosc/c-blosc/archive/refs/tags/v1.5.4.zip"
   BUILD_ARGS
@@ -78,5 +71,5 @@ build_subproject(
     -DPXR_ENABLE_MATERIALX_SUPPORT=ON
     -DPXR_ENABLE_PTEX_SUPPORT=OFF
     -DPXR_USE_PYTHON_3=ON
-  DEPENDS_ON OpenVDB zlib MaterialX
+  DEPENDS_ON OpenVDB MaterialX
 )
