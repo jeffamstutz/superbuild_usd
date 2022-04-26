@@ -17,17 +17,24 @@ find_package(Git REQUIRED)
 
 include(ExternalProject)
 include(ProcessorCount)
+include(CMakePrintHelpers)
 include(macros.cmake)
 
 ProcessorCount(PROCESSOR_COUNT)
 set(NUM_BUILD_JOBS ${PROCESSOR_COUNT} CACHE STRING "Number of build jobs '-j <n>'")
 
 set(DEFAULT_BUILD_COMMAND cmake --build . --config release -j ${NUM_BUILD_JOBS})
+option(GET_TBB "Download TBB during build process, otherwise TBB_ROOT must be set" ON)
 
 get_filename_component(INSTALL_DIR_ABSOLUTE
   ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 ## Build projects ##
+
+if (GET_TBB)
+  include(get_tbb.cmake)
+  set(TBB_TARGET tbb)
+endif()
 
 build_subproject(
   NAME Blosc
@@ -40,18 +47,11 @@ build_subproject(
   NAME OpenVDB
   URL "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v6.1.0.zip"
   BUILD_ARGS
+    -DTBB_ROOT=${TBB_ROOT}
     -DOPENVDB_BUILD_BINARIES=OFF
     -DOPENVDB_BUILD_PYTHON_MODULE=OFF
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-  DEPENDS_ON Blosc
-)
-
-build_subproject(
-  NAME MaterialX
-  URL "https://github.com/materialx/MaterialX/releases/download/v1.38.2/MaterialX-1.38.2.zip"
-  BUILD_ARGS
-    -DMATERIALX_BUILD_RENDER=OFF
-    -DMATERIALX_BUILD_TESTS=OFF
+  DEPENDS_ON Blosc ${TBB_TARGET}
 )
 
 build_subproject(
@@ -70,8 +70,9 @@ build_subproject(
     -DPXR_ENABLE_GL_SUPPORT=OFF
     -DPXR_ENABLE_HDF5_SUPPORT=OFF
     -DPXR_ENABLE_OPENVDB_SUPPORT=ON
-    -DPXR_ENABLE_MATERIALX_SUPPORT=ON
+    -DPXR_ENABLE_MATERIALX_SUPPORT=OFF
     -DPXR_ENABLE_PTEX_SUPPORT=OFF
     -DPXR_USE_PYTHON_3=ON
-  DEPENDS_ON OpenVDB MaterialX
+    -DTBB_ROOT=${TBB_ROOT}
+  DEPENDS_ON OpenVDB
 )
