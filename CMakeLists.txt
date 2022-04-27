@@ -34,6 +34,10 @@ get_filename_component(INSTALL_DIR_ABSOLUTE
 if (GET_TBB)
   include(get_tbb.cmake)
   set(TBB_TARGET tbb)
+else()
+  if (NOT DEFINED TBB_ROOT)
+    message(FATAL_ERRROR "TBB_ROOT must be specified if GET_TBB=OFF")
+  endif()
 endif()
 
 build_subproject(
@@ -48,6 +52,8 @@ build_subproject(
   URL "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v6.1.0.zip"
   BUILD_ARGS
     -DTBB_ROOT=${TBB_ROOT}
+    -DTbb_INCLUDE_DIR=${TBB_ROOT}/include
+    -DTbb_tbb_LIBRARY=${TBB_ROOT}/lib/intel64/gcc4.8/libtbb.so
     -DOPENVDB_BUILD_BINARIES=OFF
     -DOPENVDB_BUILD_PYTHON_MODULE=OFF
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
@@ -74,5 +80,8 @@ build_subproject(
     -DPXR_ENABLE_PTEX_SUPPORT=OFF
     -DPXR_USE_PYTHON_3=ON
     -DTBB_ROOT=${TBB_ROOT}
+    -DTBB_INCLUDE_DIR=${TBB_ROOT}/include
+    -DTBB_tbb_LIBRARY_DEBUG=${TBB_ROOT}/lib/intel64/gcc4.8/libtbb_debug.so
+    -DTBB_tbb_LIBRARY_RELEASE=${TBB_ROOT}/lib/intel64/gcc4.8/libtbb.so
   DEPENDS_ON OpenVDB
 )
